@@ -1,0 +1,8 @@
+# Dependencias de Node.js
+node_modules
+
+# Editor de proyectos como WebStorm
+.idea
+
+# Archivos de lock
+package-lock.json
