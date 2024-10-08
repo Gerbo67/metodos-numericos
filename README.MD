@@ -15,9 +15,15 @@ El método de Newton-Raphson es uno de los algoritmos más utilizados para encon
 
 Con este ejercicio se intenta replicar la siguiente:
 
-![Ejemplo Newton-Raphson](path/to/your/image.png)
+![Ejemplo Newton-Raphson](./img/ejerciciosiete.png)
 
 Este gráfico muestra cómo el método de Newton-Raphson aproxima la raíz de la función en cada iteración, mejorando la precisión en cada paso.
+
+## Resultado en consola
+La forma de representarlo fue mediante consola para la sencillez, usando una librería
+para generar tablas y después convertirlas en cadenas (string)
+
+![Resultado Newton-Raphson](./img/NewtonJs.png)
 
 ## Código
 
