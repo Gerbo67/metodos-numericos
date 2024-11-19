@@ -1,75 +1,51 @@
 const Table = require('cli-table3');
 
-// Formula principal igualada a 0
-// x^3 + 2x^2 + 10x - 20 = 0
-function f(x) {
-    return Math.pow(x, 3) + 2 * Math.pow(x, 2) + 10 * x - 20;
-}
+// Datos tabulados
+const x = [-2, 0, 2, 4, 6];
+const fx = [35, 5, -10, 2, 5];
 
-// Formula principal primer derivada
-// 3x^2 + 4x +10 = 0
-function fPrime(x) {
-    return 3 * Math.pow(x, 2) + 4 * x + 10;
-}
+// Método del Trapecio con pasos detallados
+function trapezoidalRuleWithSteps(x, fx) {
+    let n = x.length - 1;
+    let h = (x[n] - x[0]) / n;
+    let sumInitial = fx[0] + fx[n];
 
-// Función para calcular los datos en forma Newton-Raphson
-function newtonRaphson() {
+    // Crear la tabla con pasos detallados
+    const stepsTable = new Table({
+        head: ['i', 'x_i', 'f(x_i)', 'Multiplicado por', 'Valor después de multiplicar']
+    });
 
-    // Datos generales
-    const x0 = 1; // Valor inicial
-    const tolerance = 0.0001; // Tolerancia para detener la iteración
-    const maxIterations = 100; // Número máximo de iteraciones para que no loop
+    // Añadir filas iniciales con extremos
+    stepsTable.push(
+        [0, x[0], fx[0], 1, fx[0]],
+        [n, x[n], fx[n], 1, fx[n]]
+    );
 
-    // Variables temporales
-    let results = [];
-    let xi = x0;
-    let error = Infinity;
-    let iteration = 0;
-
-    while (error > tolerance && iteration < maxIterations) {
-        let fXi = f(xi);
-        let fPrimeXi = fPrime(xi);
-        let xiPlus1 = xi - fXi / fPrimeXi;
-
-        error = Math.abs((xiPlus1 - xi) / xiPlus1) * 100;
-
-        results.push({
-            Iteration: iteration + 1,
-            Xi: xi,
-            fXi: fXi,
-            fPrimeXi: fPrimeXi,
-            XiPlus1: xiPlus1,
-            Error: error.toFixed(4) + '%'
-        });
-
-        xi = xiPlus1;
-        iteration++;
+    // Calcular y añadir filas para los valores internos
+    let sumInterior = 0;
+    for (let i = 1; i < n; i++) {
+        let multipliedValue = 2 * fx[i];
+        sumInterior += multipliedValue;
+        stepsTable.push(
+            [i, x[i], fx[i], 2, multipliedValue]
+        );
     }
 
-    return results;
+    // Suma total de la integral
+    let sumTotal = sumInitial + sumInterior;
+    let result = (h / 2) * sumTotal;
+
+    // Mostrar tabla de pasos
+    console.log('Tabla de pasos para el método del Trapecio:');
+    console.log(stepsTable.toString());
+
+    // Mostrar resultado final
+    console.log(`\nResultado de la integral usando el método del Trapecio: ${result.toFixed(4)}\n`);
+
+    return result;
 }
 
-
-let results = newtonRaphson();
-
-// Crear la tabla
-const table = new Table({
-    head: ['Iteración', 'Xi', 'f(Xi)', 'f\'(Xi)', 'Xi+1', 'Error']
-});
-
-// Añadir filas a la tabla
-results.forEach(result => {
-    table.push([
-        result.Iteration,
-        result.Xi.toFixed(4),
-        result.fXi.toFixed(4),
-        result.fPrimeXi.toFixed(4),
-        result.XiPlus1.toFixed(4),
-        result.Error
-    ]);
-});
-
-// Imprimir la tabla en la consola
-console.log(table.toString());
+// Cálculo de la integral utilizando el método del Trapecio con pasos detallados
+let trapezoidalResult = trapezoidalRuleWithSteps(x, fx);
 
 console.log("\nJose Fernando Resendiz Lopez");
