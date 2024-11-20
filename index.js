@@ -25,22 +25,31 @@ xValues.forEach((x, i) => {
 console.log('Tabla de valores de la Distribución Normal Estándar (mu = 0, sigma = 1):');
 console.log(pdfTable.toString());
 
-// Método del Trapecio para aproximar la integral de la PDF
-function trapezoidalRule(x, y) {
-    let n = x.length - 1;  // Número de intervalos (n-1 subintervalos)
-    let h = (x[n] - x[0]) / n;  // Tamaño del subintervalo
-    let integral = 0.5 * (y[0] + y[n]);  // Suma inicial con los valores extremos multiplicados por 0.5
-
-    for (let i = 1; i < n; i++) {
-        integral += y[i];  // Suma de los valores internos
+// Método de Simpson para aproximar la integral de la PDF
+function simpsonRule(x, y) {
+    let n = x.length - 1;  // Número de intervalos
+    if (n % 2 !== 0) {
+        throw new Error('El número de intervalos debe ser par.');
     }
 
-    integral *= h;  // Multiplicación por el tamaño del subintervalo
+    let h = (x[n] - x[0]) / n;  // Tamaño del subintervalo
+    let integral = y[0] + y[n]; // Suma inicial de los extremos
+
+    // Sumar los valores intermedios
+    for (let i = 1; i < n; i++) {
+        if (i % 2 === 0) {
+            integral += 2 * y[i];
+        } else {
+            integral += 4 * y[i];
+        }
+    }
+
+    integral *= h / 3;  // Multiplicación final por h/3
     return integral;
 }
 
-// Calcular la integral usando el método del Trapecio
-const integralResult = trapezoidalRule(xValues, yValues);
+// Calcular la integral usando el método de Simpson
+const integralResult = simpsonRule(xValues, yValues);
 
 // Mostrar el resultado de la integral
-console.log(`Resultado de la integral usando el método del Trapecio: ${integralResult.toFixed(6)}`);
+console.log(`Resultado de la integral usando el método de Simpson: ${integralResult.toFixed(6)}`);
