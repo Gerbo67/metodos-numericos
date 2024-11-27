@@ -1,55 +1,30 @@
-const math = require('mathjs');
-const Table = require('cli-table3');
+// Definir la función diferencial
+// [ f(x, y) = 2y - 2x^2 + x - 3 ]
+const f = (x, y) => 2 * y - 2 * Math.pow(x, 2) + x - 3;
 
-// Función de densidad de probabilidad para la distribución normal estándar
-function normalPDF(x) {
-    return (1 / Math.sqrt(2 * Math.PI)) * Math.exp(-0.5 * x * x);
+// Metodo de Runge-Kutta de Cuarto Orden
+function rungeKutta4(x0, y0, h, steps) {
+    let x = x0;
+    let y = y0;
+
+    for (let i = 0; i < steps; i++) {
+        let k1 = h * f(x, y);
+        let k2 = h * f(x + h / 2, y + k1 / 2);
+        let k3 = h * f(x + h / 2, y + k2 / 2);
+        let k4 = h * f(x + h, y + k3);
+
+        y += (k1 + 2 * k2 + 2 * k3 + k4) / 6;
+        x += h;
+    }
+    return y;
 }
 
-// Generar valores de x desde -3 a 3 con 20 puntos
-const xValues = math.range(-3, 3, (3 - (-3)) / 19).toArray();
+// Parámetros iniciales
+const x0 = 0;
+const y0 = 1.2;
+const h = 0.1;
+const steps = Math.floor(1 / h);
 
-// Calcular los valores de la PDF para cada valor de x
-const yValues = xValues.map(normalPDF);
-
-// Crear la tabla con valores de la PDF
-const pdfTable = new Table({
-    head: ['x', 'f(x)'],
-    colWidths: [10, 20]
-});
-xValues.forEach((x, i) => {
-    pdfTable.push([x.toFixed(2), yValues[i].toFixed(5)]);
-});
-
-// Mostrar la tabla de valores de la PDF
-console.log('Tabla de valores de la Distribución Normal Estándar (mu = 0, sigma = 1):');
-console.log(pdfTable.toString());
-
-// Método de Simpson para aproximar la integral de la PDF
-function simpsonRule(x, y) {
-    let n = x.length - 1;  // Número de intervalos
-    if (n % 2 !== 0) {
-        throw new Error('El número de intervalos debe ser par.');
-    }
-
-    let h = (x[n] - x[0]) / n;  // Tamaño del subintervalo
-    let integral = y[0] + y[n]; // Suma inicial de los extremos
-
-    // Sumar los valores intermedios
-    for (let i = 1; i < n; i++) {
-        if (i % 2 === 0) {
-            integral += 2 * y[i];
-        } else {
-            integral += 4 * y[i];
-        }
-    }
-
-    integral *= h / 3;  // Multiplicación final por h/3
-    return integral;
-}
-
-// Calcular la integral usando el método de Simpson
-const integralResult = simpsonRule(xValues, yValues);
-
-// Mostrar el resultado de la integral
-console.log(`Resultado de la integral usando el método de Simpson: ${integralResult.toFixed(6)}`);
+// Obtener y(1) usando el metodo de Runge-Kutta de cuarto orden
+const y1_rk4 = rungeKutta4(x0, y0, h, steps);
+console.log(`y(1) Runge-Kutta respuesta: ${y1_rk4}`);
